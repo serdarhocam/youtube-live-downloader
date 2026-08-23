@@ -1,4 +1,4 @@
-# YouTube Live Downloader
+# YouTube Live Downloader — Windows için Portable YouTube Video İndirici
 
 [![Son Sürüm](https://img.shields.io/github/v/release/serdarhocam/youtube-live-downloader?label=s%C3%BCr%C3%BCm)](https://github.com/serdarhocam/youtube-live-downloader/releases/latest)
 [![Lisans: MIT](https://img.shields.io/badge/Lisans-MIT-green.svg)](LICENSE)
@@ -9,7 +9,7 @@ Güncel uygulama sürümü: **1.5.0**
 
 [English README](README.md)
 
-Herkese açık YouTube videolarını, oynatma listelerini, kanal yayınlarını ve arşivlenmiş canlı yayınları görüntülemek ve indirmek için hafif bir Windows masaüstü uygulamasıdır. Meta verileri ve medyayı gömülü `yt-dlp` ile alır; ayrı video ve ses akışlarını gereksiz yeniden kodlama yapmadan gömülü FFmpeg ile birleştirir.
+Windows 10/11 için ücretsiz ve portable YouTube video indirici. Herkese açık YouTube videolarını, oynatma listelerini, kanal yayınlarını ve arşivlenmiş canlı yayınları ek kurulum olmadan indirin. Bu portable YouTube indirici Python, Node.js, yt-dlp veya FFmpeg kurulumu istemez; gerekli araçları kendi içinde taşır ve ayrı video/ses akışlarını gereksiz yeniden kodlama yapmadan birleştirir.
 
 Yalnızca sahibi olduğunuz veya indirme izniniz bulunan içerikler için kullanın. Uygulama DRM, kimlik doğrulama veya CAPTCHA mekanizmalarını aşmaz.
 
