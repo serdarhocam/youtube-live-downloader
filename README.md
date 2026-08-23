@@ -1,6 +1,9 @@
 # YouTube Live Downloader
 
+[![Latest Release](https://img.shields.io/github/v/release/serdarhocam/youtube-live-downloader?label=release)](https://github.com/serdarhocam/youtube-live-downloader/releases/latest)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
+**[Download the portable Windows application](https://github.com/serdarhocam/youtube-live-downloader/releases/latest/download/YouTubeLiveDownloader.exe)** · [SHA-256 checksum](https://github.com/serdarhocam/youtube-live-downloader/releases/latest/download/SHA256SUMS.txt)
 
 Current application version: **1.5.0**
 

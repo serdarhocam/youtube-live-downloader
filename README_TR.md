@@ -1,6 +1,9 @@
 # YouTube Live Downloader
 
+[![Son Sürüm](https://img.shields.io/github/v/release/serdarhocam/youtube-live-downloader?label=s%C3%BCr%C3%BCm)](https://github.com/serdarhocam/youtube-live-downloader/releases/latest)
 [![Lisans: MIT](https://img.shields.io/badge/Lisans-MIT-green.svg)](LICENSE)
+
+**[Portable Windows uygulamasını indir](https://github.com/serdarhocam/youtube-live-downloader/releases/latest/download/YouTubeLiveDownloader.exe)** · [SHA-256 doğrulama dosyası](https://github.com/serdarhocam/youtube-live-downloader/releases/latest/download/SHA256SUMS.txt)
 
 Güncel uygulama sürümü: **1.5.0**
 
