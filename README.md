@@ -1,4 +1,4 @@
-# YouTube Live Downloader
+# YouTube Live Downloader — Portable YouTube Video Downloader for Windows
 
 [![Latest Release](https://img.shields.io/github/v/release/serdarhocam/youtube-live-downloader?label=release)](https://github.com/serdarhocam/youtube-live-downloader/releases/latest)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
@@ -9,7 +9,7 @@ Current application version: **1.5.0**
 
 [Türkçe README](README_TR.md)
 
-A lightweight Windows desktop application for browsing and downloading public YouTube videos, playlists, channel streams, and archived livestreams. It reads metadata and downloads media through a bundled `yt-dlp`, then uses bundled FFmpeg to merge separate video and audio streams without unnecessary re-encoding.
+A free, portable YouTube video downloader for Windows 10/11. Download public YouTube videos, playlists, channel streams, and archived livestreams without installing Python, Node.js, yt-dlp, or FFmpeg. The standalone application embeds its own tools and merges separate video and audio streams without unnecessary re-encoding.
 
 Use it only for content you own or have permission to download. It does not bypass DRM, authentication, or CAPTCHA challenges.
 
