@@ -1,0 +1,54 @@
+# JavaScript dependencies and generated frontend
+node_modules/
+dist/
+.npm-cache/
+
+# Rust/Tauri build products
+src-tauri/target/
+portable/
+portable-*/
+
+# Downloaded tool archives and extraction work directories
+ffmpeg-extract/
+ffmpeg-release-*.zip
+rustup-init.exe
+
+# Local validation downloads and incomplete media
+validation-*/
+*.part
+*.ytdl
+*.temp
+*.tmp
+
+# Local runtime state/logs if copied into the repository
+download-queue.json*
+settings.json
+*.log
+
+# Environment files and credentials (keep examples explicitly trackable)
+.env
+.env.*
+!.env.example
+*.pem
+*.pfx
+*.p12
+*.key
+*.cer
+*.crt
+
+# Local release/signing material
+*.sig
+*.asc
+release-notes.local.md
+
+# IDE and operating-system files
+.vscode/
+.idea/
+.vs/
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Local GitHub/Codex tooling state
+.codex/
+.agents/

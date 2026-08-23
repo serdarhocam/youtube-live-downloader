@@ -1,0 +1,14 @@
+# Bundled upstream executables are required for reproducible portable builds.
+# FFmpeg binaries exceed GitHub's regular per-file limit, so keep them in Git LFS.
+src-tauri/binaries/yt-dlp.exe filter=lfs diff=lfs merge=lfs -text
+src-tauri/binaries/ffmpeg.exe filter=lfs diff=lfs merge=lfs -text
+src-tauri/binaries/ffprobe.exe filter=lfs diff=lfs merge=lfs -text
+
+# Normalize project text files across Windows development environments.
+*.rs text eol=lf
+*.ts text eol=lf
+*.css text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.toml text eol=lf
+*.ps1 text eol=crlf
