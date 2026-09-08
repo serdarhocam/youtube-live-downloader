@@ -1,11 +1,11 @@
-# YouTube Live Downloader — Windows için Portable YouTube Video İndirici
+# YouTube Live Downloader - Windows için Portable YouTube Video İndirici
 
 [![Son Sürüm](https://img.shields.io/github/v/release/serdarhocam/youtube-live-downloader?label=s%C3%BCr%C3%BCm)](https://github.com/serdarhocam/youtube-live-downloader/releases/latest)
 [![Lisans: MIT](https://img.shields.io/badge/Lisans-MIT-green.svg)](LICENSE)
 
-**[Portable Windows uygulamasını indir](https://github.com/serdarhocam/youtube-live-downloader/releases/latest/download/YouTubeLiveDownloader.exe)** · [SHA-256 doğrulama dosyası](https://github.com/serdarhocam/youtube-live-downloader/releases/latest/download/SHA256SUMS.txt)
+**[Portable Windows uygulamasını indir](https://github.com/serdarhocam/youtube-live-downloader/releases/latest)** · [SHA-256 doğrulama dosyası](https://github.com/serdarhocam/youtube-live-downloader/releases/latest)
 
-Güncel uygulama sürümü: **1.5.0**
+Güncel uygulama sürümü: **1.9.0 / p0008**
 
 [English README](README.md)
 
@@ -76,7 +76,7 @@ Kapsamı dar `.gitattributes` kuralları yalnızca gömülü EXE dosyalarını L
 
 Depo kopyaları `src-tauri/binaries/` altında bulunur:
 
-- `yt-dlp.exe`: Resmî [yt-dlp sürümleri](https://github.com/yt-dlp/yt-dlp/releases)
+- `yt-dlp.exe`: Resmi [yt-dlp sürümleri](https://github.com/yt-dlp/yt-dlp/releases)
 - `ffmpeg.exe` ve `ffprobe.exe`: FFmpeg kaynağından derlenen [gyan.dev Windows essentials build](https://www.gyan.dev/ffmpeg/builds/)
 - `VERSIONS.txt`: Sabitlenmiş sürümler ve kaynak adresleri
 
@@ -84,7 +84,7 @@ Rust binary yöneticisi yt-dlp ve FFmpeg'i `include_bytes!` ile doğrudan uygula
 
 Mevcut NSIS yükleyicinin isteğe bağlı dağıtım olarak çalışmaya devam etmesi için aynı kaynak binary'ler `tauri.conf.json` içinde Tauri resource olarak da listelenir. Portable EXE bu dış resource kopyalarına bağımlı değildir.
 
-yt-dlp'yi güncellemek için `src-tauri/binaries/yt-dlp.exe` dosyasını doğrulanmış resmî sürümle değiştirin, `VERSIONS.txt` dosyasını güncelleyin, `--version` komutuyla doğrulayın ve yeniden derleyin. Kaynak kod değişikliği gerekmez.
+yt-dlp'yi güncellemek için `src-tauri/binaries/yt-dlp.exe` dosyasını doğrulanmış resmi sürümle değiştirin, `VERSIONS.txt` dosyasını güncelleyin, `--version` komutuyla doğrulayın ve yeniden derleyin. Kaynak kod değişikliği gerekmez.
 
 ## Geliştirme
 
@@ -111,63 +111,24 @@ Alanı güvenle geri kazanmak için:
 cargo clean --manifest-path src-tauri/Cargo.toml
 ```
 
-Bu komut yalnız `src-tauri/target` altındaki Rust derleme çıktılarını kaldırır. Kaynak dosyaları, `src-tauri/binaries`, önceden kopyalanmış `portable/YouTubeLiveDownloader.exe`, kullanıcı indirmeleri, ayarlar veya kalıcı indirme kuyruğu silinmez. Tüm bağımlılıkların yeniden derlenmesi gerektiği için sonraki Rust/Tauri derlemesi daha uzun sürer. `src-tauri/target/` `.gitignore` ile Git dışında tutulur ve hiçbir zaman commit edilmemelidir.
+Bu komut yalnız `src-tauri/target` altındaki Rust derleme çıktılarını kaldırır. Kaynak dosyaları, `src-tauri/binaries`, önceden kopyalanmış `portable/`, kullanıcı indirmeleri, ayarlar veya kalıcı indirme kuyruğu silinmez. Tüm bağımlılıkların yeniden derlenmesi gerektiği için sonraki Rust/Tauri derlemesi daha uzun sürer. `src-tauri/target/` `.gitignore` ile Git dışında tutulur ve hiçbir zaman commit edilmemelidir.
 
-## Portable release (birincil)
+## Sürüm ve paket numaralı dağıtım
 
-Tek dosyalı portable uygulamayı oluşturun:
+- `npm run portable`: Yalnız portable EXE üretir.
+- `npm run installer`: Yalnız NSIS kurulum paketini üretir.
+- `npm run release`: Portable ve kurulum paketini aynı sürüm/paket numarasıyla üretir.
 
-```powershell
-npm run portable
-```
+Örnek çıktılar:
 
-Çıktılar:
+- `portable/YouTubeLiveDownloader-v1.6.0-p0001-portable.exe`
+- `installer/YouTubeLiveDownloader-v1.6.0-p0001-installer.exe`
 
-- `portable\YouTubeLiveDownloader.exe`
-- `portable\SHA256SUMS.txt`
+Her EXE yanında aynı adı taşıyan `.exe.sha256` doğrulama dosyası oluşturulur. Paket numarası `scripts/package-sequence.json` içinde tutulur, her paketleme çalışmasında otomatik artar ve sürüm değiştiğinde sıfırlanmaz. Başarısız derlemelerin numarası tekrar kullanılmaz. Bu sayaç dosyasını release değişiklikleriyle birlikte commit edin. Eşzamanlı paketlemeler kilitle engellenir; eski paketlerin üzerine yazılmaz.
 
-EXE tek başına istenen klasöre kopyalanabilir. İlk çalıştırmada gömülü araçlar sessizce uygulamaya ait yerel cache'e çıkarılır. Hash'ler gömülü yükle eşleştiği sürece tekrar çıkarılmaz. Gömülü bir araç değiştirilip yeniden derlendiğinde cache anahtarı otomatik değişir.
+Dağıtım için bu komutları kullanın. Doğrudan Tauri komutları `src-tauri/target` altında ham ara çıktılar üretir; dağıtılacak sürüm/paket numaralı dosyalar `portable` ve `installer` klasörlerindedir. Eski, numarasız EXE önceki sürüm olarak kalır ve güncellenmez.
 
-`SHA256SUMS.txt`, `npm run portable` tarafından otomatik oluşturulur. Uygulamayı çalıştırmak için gerekli değildir ve kullanıcının EXE yanında taşıması gerekmez. Kullanıcıların EXE'nin değiştirilmediğini doğrulayabilmesi için GitHub Release ile birlikte saklayın veya yayınlayın. Aynı değer derleme konsoluna da yazılır.
-
-Portable yayınlamadan önce önerilen tam sıra:
-
-```powershell
-npm ci
-npm run check
-cargo test --manifest-path src-tauri/Cargo.toml
-cargo clippy --manifest-path src-tauri/Cargo.toml -- -D warnings
-npm run portable
-Get-FileHash portable/YouTubeLiveDownloader.exe -Algorithm SHA256
-```
-
-Son kullanıcıya yalnız `portable\YouTubeLiveDownloader.exe` dağıtılması yeterlidir. Hedef bilgisayarda depo, `src-tauri\binaries`, Node.js veya Rust toolchain gerekmez.
-
-## İsteğe bağlı yükleyici
-
-Üretim uygulamasını ve yükleyiciyi oluşturun:
-
-```powershell
-npm run tauri build
-```
-
-Kullanıcı bazında çalışan NSIS yükleyici alternatif dağıtım olarak korunur.
-
-Çıktılar:
-
-- Uygulama EXE: `src-tauri/target/release/youtube-live-downloader.exe`
-- NSIS yükleyici: `src-tauri/target/release/bundle/nsis/`
-
-Ham release EXE ile `portable\YouTubeLiveDownloader.exe` gömülü yükleri içerir ve bağımsız çalışabilir. Dağıtım için adı açık olan `portable` klasöründeki kopyayı tercih edin.
-
-## Diğer çalıştırma ve dağıtım yöntemleri
-
-- `npm run tauri dev`: Vite hot reload ve Rust backend ile geliştirme modu.
-- `npm run tauri build -- --no-bundle`: Yükleyici olmadan ham bağımsız uygulama EXE'si üretir.
-- `npm run tauri build`: Ham EXE ve isteğe bağlı NSIS yükleyici üretir.
-- `npm run portable`: Üretim derlemesi, açık adlandırılmış portable kopya ve SHA-256 raporu üretir.
-
-NSIS yükleyici Başlat Menüsü kısayolları, kaldırma desteği ve yönetilen klasik dağıtım için kullanışlıdır. Portable EXE USB bellek, geçici kullanım veya kurulum yapmadan istenen klasöre kopyalama için uygundur.
+Geliştirme: `npm run tauri dev`. Yayın öncesi kontrol: `npm run check` ve `cargo test --manifest-path src-tauri/Cargo.toml --lib`.
 
 ## Sürümleme ve yayın akışı
 
@@ -184,7 +145,7 @@ powershell -ExecutionPolicy Bypass -File scripts/set-version.ps1 -Version 1.4.0
 npm install --package-lock-only
 ```
 
-Ardından `CHANGELOG.md` dosyasını güncelleyin, tüm release kontrollerini çalıştırın, commit oluşturun, `v1.4.0` gibi bir Git etiketi ekleyin ve portable EXE, SHA-256/SHA256SUMS dosyası ile istenirse NSIS yükleyiciyi GitHub Release'e ekleyin. Uygulama, npm paketi, Cargo paketi ve Tauri bundle sürümleri aynı olmalıdır.
+Ardından `CHANGELOG.md` dosyasını güncelleyin, tüm release kontrollerini çalıştırın, commit oluşturun, `v1.4.0` gibi bir Git etiketi ekleyin ve portable EXE, SHA-256 dosyası ile istenirse NSIS yükleyiciyi GitHub Release'e ekleyin. Uygulama, npm paketi, Cargo paketi ve Tauri bundle sürümleri aynı olmalıdır.
 
 Gömülü araç sürümleri ayrıca `src-tauri/binaries/VERSIONS.txt` içinde takip edilir. yt-dlp veya FFmpeg güncellemesi uygulama kodu değişikliği gerektirmez; kullanıcıların yeni yükü ayırt edebilmesi için yeni bir patch release önerilir.
 
@@ -266,3 +227,24 @@ yt-dlp yerel tekrar denemelerini tüketirse uygulama geçici hataları 60 saniye
 ## Lisans
 
 YouTube Live Downloader'ın kendi kaynak kodu [MIT Lisansı](LICENSE) ile sunulur. Birlikte dağıtılan yt-dlp ve FFmpeg çalıştırılabilir dosyaları kendi upstream lisanslarına tabidir; ayrıntılar için [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) dosyasına bakın.
+
+## 1.6.0: Video klasörleri ve oynatıcı
+
+Yeni indirmeler `İndirme klasörü/Video başlığı [video kimliği]/` altında video ve JPG kapağı birlikte tutar. Eski kayıtlar ve yarım indirmeler mevcut yollarını korur.
+
+Her indirme kartındaki **Oynat** düğmesi bağımsız bir masaüstü penceresi açar. Başlat, duraklat, durdur, 10 saniye geri, 30 saniye ileri, 0,25-10× hız, ses ve tam ekran denetimleri bulunur. Oynatma, Windows WebView2 video/ses codec desteğine bağlıdır; desteklenmeyen dosyalarda oynatıcı hata gösterir.
+
+**Klasörde Göster**, kaydın kendi klasörünü Explorer ile açar. Açılışta, ana pencereye dönüşte ve indirme tamamlandığında dosyalar kontrol edilir. Tamamlanan kayıtlarda video, beklenen JPG kapak veya klasör bulunamazsa kart üzerinde belirtilir. Eksik video oynatılamaz; eksik klasör yeniden oluşturulmaz.
+
+## 1.7.0: Sohbet arşivi ve Resolve
+
+Canlı yayın sohbetlerini indirme, 15 saniyelik yoğunluk analizi, Resolve XML kesimlerini içe aktarma ve şeffaf sohbet katmanı üretme için [kullanım rehberine](CHAT_WORKFLOW_TR.md) bakın.
+
+## 1.9.0 / p0008
+
+- [Portable EXE](https://github.com/serdarhocam/youtube-live-downloader/releases/download/v1.9.0/YouTubeLiveDownloader-v1.9.0-p0008-portable.exe)
+- [Installer EXE](https://github.com/serdarhocam/youtube-live-downloader/releases/download/v1.9.0/YouTubeLiveDownloader-v1.9.0-p0008-installer.exe)
+- [SHA-256](https://github.com/serdarhocam/youtube-live-downloader/releases/download/v1.9.0/SHA256SUMS.txt)
+- [Chat ve Resolve rehberi](CHAT_WORKFLOW_TR.md)
+
+Mesaj süreleri kesim sınırlarında kısalmaz. Geçmiş mesajlar için font ve opaklık ayarları bulunur. MOV ve SRT, Resolve kesimleri etkinse yeni zaman çizelgesini kullanır.

@@ -43,6 +43,7 @@ fn parse_item(v: &Value, parent_url: &str) -> VideoItem {
         if id.len() == 11 { format!("https://www.youtube.com/watch?v={id}") } else { parent_url.to_owned() }
     });
     VideoItem {
+        was_live: v.get("was_live").and_then(Value::as_bool).or_else(|| v.get("live_status").and_then(Value::as_str).map(|s| matches!(s, "was_live" | "post_live" | "is_live"))),
         id,
         title: text(v, &["title"]).unwrap_or_else(|| "Untitled video".into()),
         description: text(v, &["description"]),

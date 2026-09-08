@@ -18,6 +18,6 @@ pub fn run() {
             tauri::async_runtime::block_on(state.downloads.initialize(app.handle())).map_err(std::io::Error::other)?;
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![commands::load_metadata,commands::get_settings,commands::save_settings,commands::open_download_folder,commands::open_developer_website,commands::queue_downloads,commands::cancel_download,commands::remove_download_job,commands::pause_download,commands::resume_download,commands::resume_all_downloads,commands::list_download_jobs,commands::get_app_info])
+        .invoke_handler(tauri::generate_handler![commands::open_chat_export_folder,commands::open_chat,commands::get_chat,commands::download_chat,commands::cancel_chat,commands::get_chat_status,commands::import_resolve_xml,commands::get_chat_timing,commands::export_chat_text,commands::render_chat_overlay,commands::chat_raw_page,commands::check_download_files,commands::open_job_folder,commands::get_playback_media,commands::open_player,commands::load_metadata,commands::get_settings,commands::save_settings,commands::open_download_folder,commands::open_developer_website,commands::queue_downloads,commands::cancel_download,commands::remove_download_job,commands::pause_download,commands::resume_download,commands::resume_all_downloads,commands::list_download_jobs,commands::get_app_info])
         .run(tauri::generate_context!()).expect("error while running application");
 }
