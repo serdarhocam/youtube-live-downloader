@@ -52,3 +52,6 @@ Desktop.ini
 # Local GitHub/Codex tooling state
 .codex/
 .agents/
+
+installer/
+.release-build.lock

@@ -44,6 +44,7 @@ impl DownloadManager {
         let mut restored = load_jobs(app)?;
         let now = chrono::Utc::now().timestamp();
         for job in restored.values_mut() {
+            if job.status == "completed" { job.output_path = super::media::inspect(job).video_path.or(job.output_path.clone()); }
             if matches!(job.status.as_str(), "queued" | "preparing" | "downloading" | "pausing" | "retrying" | "merging") {
                 job.status = "interrupted".into();
                 job.stage = "Interrupted — Resume available".into();
@@ -73,7 +74,7 @@ impl DownloadManager {
                 return Err(format!("An unfinished download already exists for '{}'. Resume or cancel that job first.", request.item.title));
             }
             let id = uuid::Uuid::new_v4().to_string();
-            let output_template = PathBuf::from(&settings.download_directory).join("%(title).180B [%(id)s].%(ext)s").to_string_lossy().into_owned();
+            let output_template = super::media::output_template(&settings.download_directory, &request.item.title, &request.item.id);
             let job = DownloadJob {
                 job_id: id.clone(), request, settings: settings.clone(), output_template,
                 status: "queued".into(), stage: "Queued".into(), percent: None,
@@ -128,7 +129,7 @@ impl DownloadManager {
         let progress_template = "download:PROGRESS_JSON:%(progress)j";
         let mut command = Command::new(&bins.ytdlp);
         command.args([
-            "--newline", "--no-color", "--continue", "--part", "--no-overwrites",
+            "--encoding", "utf-8", "--newline", "--no-color", "--continue", "--part", "--no-overwrites",
             "--retries", "10", "--fragment-retries", "20", "--extractor-retries", "5",
             "--file-access-retries", "5", "--retry-sleep", "http:exp=1:20",
             "--retry-sleep", "fragment:exp=1:20", "--retry-sleep", "extractor:exp=1:10",
@@ -185,8 +186,15 @@ impl DownloadManager {
             _ if desired == "pausing" => { self.transition(&app, &job_id, "paused", "Paused", Some("Partial files were preserved.".into())).await; }
             _ if desired == "cancelled" => { self.transition(&app, &job_id, "cancelled", "Cancelled", Some("Partial files were preserved and can be resumed.".into())).await; }
             Ok(code) if code.success() => {
-                self.update_job(&app, &job_id, |j| { j.status="completed".into(); j.stage="Completed".into(); j.percent=Some(100.0); j.speed=None; j.eta=None; j.output_path=final_path; j.message=None; }).await;
+                self.update_job(&app, &job_id, |j| { j.status="completed".into(); j.stage="Completed".into(); j.percent=Some(100.0); j.speed=None; j.eta=None; j.output_path=final_path; j.output_path=super::media::inspect(j).video_path.or(j.output_path.clone()); j.message=None; }).await;
                 let _ = self.persist_now(&app).await; tracing::info!(job_id=%job_id, "download complete");
+                if job.request.item.was_live == Some(true) {
+                    if let Some(saved) = self.jobs.lock().await.get(&job_id).cloned() {
+                        let chat_app=app.clone();
+                        tauri::async_runtime::spawn(async move { if let Err(e)=super::chat::download(&chat_app,&saved).await { tracing::warn!(error=%e,"chat download failed; video remains complete"); } });
+                    }
+                }
+
             }
             Ok(_) | Err(_) => self.handle_failure(&app, &job_id, details).await,
         }

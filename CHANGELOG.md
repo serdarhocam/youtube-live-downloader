@@ -1,11 +1,54 @@
+## 1.9.0
+
+- Preserve configured chat lifetimes across Resolve cuts; clarify count/height limits.
+- Replace history prefix with configurable font size and opacity in preview/MOV.
+- Add export-folder action and explicit MOV/SRT timeline indicator; remember XML toggle.
+
+## 1.8.1
+
+- Fix standard YouTube emoji images hosted on fonts.gstatic.com, including robot and smiling face, in preview and MOV export.
+
+## 1.8.0
+
+- Inline nickname/message flow, width-based wrapping and transparent chat styling with text outline/shadow.
+- Preserve YouTube rich emote runs without changing raw archives; show images in chat preview and alpha MOV exports.
+- Cache export emote images and render frame-aligned transparent scenes.
+
 # Changelog
 
 All notable changes to this project are documented here. The project follows semantic versioning (`MAJOR.MINOR.PATCH`).
 
+## [1.7.0] - 2026-09-08
+
+- Archive available live-chat replays automatically after new livestream recordings finish; existing recordings can fetch chat separately.
+- Preserve raw yt-dlp JSONL and derive normalized message data without modifying the original archive.
+- Add a separate Chat Studio window with searchable virtualized messages, raw JSON browsing, paid-message events, participant/type statistics and non-overlapping peaks from 15-second windows at 1-second steps.
+- Import Final Cut Pro 7 XML straight-cut timelines; validate source clips, rational frame rates and unsupported timing changes.
+- Retime chat to the edit and retain a configurable number of recent messages from removed sections as temporary history.
+- Export timed SRT (all, paid messages or highlights) and transparent QuickTime Animation MOV chat widgets with colored authors, sliding messages, size/font/lifetime controls and cancellation.
+- Custom emoji and stickers use text labels; actual Resolve import testing remains dependent on the user's exported timeline and Resolve version.
+
+## [1.6.1] - 2026-09-08
+
+- Recover missing completed-video paths from the exact video directory, including Unicode titles with truncated filename IDs; persist recovered paths on startup.
+- Avoid selecting ambiguous files, intermediate format streams or unrelated videos in shared folders.
+- Force UTF-8 yt-dlp output so Windows text decoding cannot silently stop at non-ASCII paths.
+
+## [1.6.0] - 2026-09-08
+
+- Group compact card actions in Play, Show in Folder, Quality, Download Again, Remove order.
+- Add permanent version/package-numbered portable and installer packaging with a shared monotonic counter and individual checksums.
+
+- Put Choose Folder before Open Folder.
+- Store new video and thumbnail downloads in an individual title/ID directory.
+- Add per-video Show in Folder and a separate native playback window with play, pause, stop, -10/+30 second seeking, volume, fullscreen and up to 10x speed.
+- Check recorded media on startup, focus and download completion; display missing video, thumbnail or folder warnings.
+- Preserve existing download locations and resumable output templates. Playback codec support depends on Windows WebView2.
+
 ## [1.5.0] - 2026-08-23
 
 - Added a green SERDARHOCAM developer button beside About with distinctive typography.
-- Updated the About developer field to `SERDARHOCAM — YouTube Live Downloader Project`.
+- Updated the About developer field to `SERDARHOCAM - YouTube Live Downloader Project`.
 - Both developer elements open `https://serdarhocam.com/` through a fixed, shell-free Rust command.
 - Updated English and Turkish documentation.
 

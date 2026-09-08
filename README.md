@@ -1,11 +1,11 @@
-# YouTube Live Downloader — Portable YouTube Video Downloader for Windows
+# YouTube Live Downloader - Portable YouTube Video Downloader for Windows
 
 [![Latest Release](https://img.shields.io/github/v/release/serdarhocam/youtube-live-downloader?label=release)](https://github.com/serdarhocam/youtube-live-downloader/releases/latest)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-**[Download the portable Windows application](https://github.com/serdarhocam/youtube-live-downloader/releases/latest/download/YouTubeLiveDownloader.exe)** · [SHA-256 checksum](https://github.com/serdarhocam/youtube-live-downloader/releases/latest/download/SHA256SUMS.txt)
+**[Download the portable Windows application](https://github.com/serdarhocam/youtube-live-downloader/releases/latest)** · [SHA-256 checksum](https://github.com/serdarhocam/youtube-live-downloader/releases/latest)
 
-Current application version: **1.5.0**
+Current application version: **1.9.0 / p0008**
 
 [Türkçe README](README_TR.md)
 
@@ -66,15 +66,15 @@ git lfs install
 git lfs pull
 ```
 
-The scoped `.gitattributes` rules store only the bundled executables in LFS. Verify that `src-tauri\binaries\*.exe` are real `MZ` executables—not small LFS pointer text files—before building.
+The scoped `.gitattributes` rules store only the bundled executables in LFS. Verify that `src-tauri\binaries\*.exe` are real `MZ` executables-not small LFS pointer text files-before building.
 
 ## Bundled executables
 
 Repository copies live in `src-tauri/binaries/`:
 
-- `yt-dlp.exe` — official executable from the [yt-dlp releases](https://github.com/yt-dlp/yt-dlp/releases)
-- `ffmpeg.exe` and `ffprobe.exe` — Windows essentials build from [gyan.dev](https://www.gyan.dev/ffmpeg/builds/), built from FFmpeg source
-- `VERSIONS.txt` — pinned versions and source URLs
+- `yt-dlp.exe` - official executable from the [yt-dlp releases](https://github.com/yt-dlp/yt-dlp/releases)
+- `ffmpeg.exe` and `ffprobe.exe` - Windows essentials build from [gyan.dev](https://www.gyan.dev/ffmpeg/builds/), built from FFmpeg source
+- `VERSIONS.txt` - pinned versions and source URLs
 
 The Rust binary manager links yt-dlp and FFmpeg directly into the application with `include_bytes!`. At startup it computes the embedded payload hash and extracts them under `%LOCALAPPDATA%\com.ytld.desktop\embedded-binaries\v1\<hash>`. Existing files are reused only after size and SHA-256 validation. Extraction uses a cross-process lock, temporary file, flush, verification, and atomic rename. yt-dlp always receives the extracted FFmpeg directory via `--ffmpeg-location`; neither executable is searched in `PATH`.
 
@@ -107,63 +107,24 @@ Reclaim the space safely with:
 cargo clean --manifest-path src-tauri/Cargo.toml
 ```
 
-This removes only Rust build products under `src-tauri/target`. It does not remove source files, `src-tauri/binaries`, the already copied `portable/YouTubeLiveDownloader.exe`, user downloads, settings, or the persistent download queue. The next Rust/Tauri build will take longer because all dependencies must be compiled again. `src-tauri/target/` is excluded from Git by `.gitignore` and must never be committed.
+This removes only Rust build products under `src-tauri/target`. It does not remove source files, `src-tauri/binaries`, the already copied `portable/`, user downloads, settings, or the persistent download queue. The next Rust/Tauri build will take longer because all dependencies must be compiled again. `src-tauri/target/` is excluded from Git by `.gitignore` and must never be committed.
 
-## Portable release (primary)
+## Versioned distribution packages
 
-Build the single-file portable application with:
+- `npm run portable`: Build the portable EXE only.
+- `npm run installer`: Build the NSIS installer only.
+- `npm run release`: Build both with the same version and package number.
 
-```powershell
-npm run portable
-```
+Example outputs:
 
-Output:
+- `portable/YouTubeLiveDownloader-v1.6.0-p0001-portable.exe`
+- `installer/YouTubeLiveDownloader-v1.6.0-p0001-installer.exe`
 
-- `portable\YouTubeLiveDownloader.exe`
-- `portable\SHA256SUMS.txt`
+Each EXE has a matching `.exe.sha256` checksum file. The package counter in `scripts/package-sequence.json` increases for every packaging invocation and never resets on version changes. Failed builds consume a number. Commit the counter with release changes. A lock prevents concurrent packaging and existing packages are never overwritten.
 
-This file can be copied by itself to an arbitrary folder. On first launch, embedded tools are silently materialized in the application-owned local cache. They are not extracted again while their hashes match the embedded payloads. Replacing a bundled tool and rebuilding changes the cache key automatically.
+Use these commands for distribution. Direct Tauri commands produce raw intermediate artifacts under `src-tauri/target`; distributable version/package-numbered files live under `portable` and `installer`. Existing unnumbered executables remain old copies and are no longer updated.
 
-`SHA256SUMS.txt` is generated automatically by `npm run portable`. It is not required to run the application and the user does not need to copy it next to the EXE. Keep or publish it with a GitHub Release when you want users to verify that the downloaded executable is unchanged. The build console also prints the same value.
-
-Before publishing a portable release, use this complete sequence:
-
-```powershell
-npm ci
-npm run check
-cargo test --manifest-path src-tauri/Cargo.toml
-cargo clippy --manifest-path src-tauri/Cargo.toml -- -D warnings
-npm run portable
-Get-FileHash portable/YouTubeLiveDownloader.exe -Algorithm SHA256
-```
-
-Only `portable\YouTubeLiveDownloader.exe` must be distributed. The repository, `src-tauri\binaries`, Node.js and the Rust toolchain are not needed on the target computer.
-
-## Optional installer
-
-Build the production application and installer with:
-
-```powershell
-npm run tauri build
-```
-
-The existing per-user NSIS installer remains available as an alternative distribution:
-
-Outputs are generated under:
-
-- Application executable: `src-tauri/target/release/youtube-live-downloader.exe`
-- NSIS installer: `src-tauri/target/release/bundle/nsis/`
-
-The raw release executable and `portable\YouTubeLiveDownloader.exe` contain the embedded payloads and are independently runnable. Prefer the clearly named copy in `portable` for distribution.
-
-## Other ways to run and distribute
-
-- `npm run tauri dev`: development mode with Vite hot reload and Rust backend.
-- `npm run tauri build -- --no-bundle`: produces the raw self-contained application executable without an installer.
-- `npm run tauri build`: produces the raw executable and the optional NSIS installer.
-- `npm run portable`: production build plus a clearly named portable copy and SHA-256 report.
-
-The NSIS installer is useful for Start Menu entries, uninstall support and conventional managed deployment. The portable executable is preferable for USB drives, temporary use, or copying to arbitrary folders without installation.
+Development: `npm run tauri dev`. Before release: `npm run check` and `cargo test --manifest-path src-tauri/Cargo.toml --lib`.
 
 ## Versioning and release workflow
 
@@ -222,7 +183,7 @@ These locations are application-owned runtime storage. They are created automati
 
 ## Console-window policy
 
-The application itself is compiled with the Windows GUI subsystem. Every bundled yt-dlp invocation—metadata loading, version lookup and downloading—and the process-tree cancellation helper uses `CREATE_NO_WINDOW`. Normal Load, About, Download, Pause and Cancel operations therefore do not open PowerShell or Command Prompt windows.
+The application itself is compiled with the Windows GUI subsystem. Every bundled yt-dlp invocation-metadata loading, version lookup and downloading-and the process-tree cancellation helper uses `CREATE_NO_WINDOW`. Normal Load, About, Download, Pause and Cancel operations therefore do not open PowerShell or Command Prompt windows.
 
 ## Live progress
 
@@ -262,3 +223,35 @@ After yt-dlp exhausts its native retries, the application retries transient fail
 ## License
 
 YouTube Live Downloader's own source code is available under the [MIT License](LICENSE). Bundled yt-dlp and FFmpeg executables retain their respective upstream licenses; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
+## 1.6.0: Video folders and playback
+
+New downloads keep each video and its JPG thumbnail together under `Download directory/Video title [video ID]/`. Existing records and partial downloads retain their paths.
+
+Each download card has **Play**, opening an independent desktop window with play, pause, stop, -10/+30 second seeking, 0.25-10x speed, volume and fullscreen controls. Playback depends on Windows WebView2 codec support; unsupported files display an error.
+
+**Show in Folder** opens that record's directory in Explorer. Files are checked on startup, main-window focus and completion. Completed records show missing video, expected JPG thumbnail or directory warnings. Missing videos cannot be played, and missing folders are not silently recreated.
+
+## 1.7.0: Chat archive and Resolve
+
+Chat Studio archives available replays, analyzes 15-second sliding windows, imports straight-cut Final Cut Pro 7 XML and exports retimed SRT or transparent QuickTime Animation MOV overlays. Recent messages from removed sections can remain visible as temporary history. See the [Turkish workflow guide](CHAT_WORKFLOW_TR.md) for settings and limitations.
+
+## 1.9.0 / p0008
+
+- [Portable EXE](https://github.com/serdarhocam/youtube-live-downloader/releases/download/v1.9.0/YouTubeLiveDownloader-v1.9.0-p0008-portable.exe)
+- [Installer EXE](https://github.com/serdarhocam/youtube-live-downloader/releases/download/v1.9.0/YouTubeLiveDownloader-v1.9.0-p0008-installer.exe)
+- [SHA-256](https://github.com/serdarhocam/youtube-live-downloader/releases/download/v1.9.0/SHA256SUMS.txt)
+- [Chat ve Resolve rehberi](CHAT_WORKFLOW_TR.md)
+
+Mesaj süreleri kesim sınırlarında kısalmaz. Geçmiş mesajlar için font ve opaklık ayarları bulunur. MOV ve SRT, Resolve kesimleri etkinse yeni zaman çizelgesini kullanır.
+
+## Publishing updates to GitHub
+
+1. Run `npm run release` once for portable and installer outputs sharing one package number.
+2. Test the numbered files and verify their `.sha256` sidecars. Keep build outputs outside Git history.
+3. Update the version, numbered download links and release URL in `docs/index.html` and both READMEs.
+4. Commit source, documentation and `scripts/package-sequence.json`, then push `main` without force.
+5. Publish a GitHub Release with a version tag targeting that commit. Attach the numbered portable and installer files, their checksum sidecars, and `SHA256SUMS.txt`. Mark it as latest.
+6. Verify the Release assets and Pages deployment. Pages builds automatically from `main:/docs`.
+
+Do not replace an older release asset or create a new unnumbered executable alias. Preserve old release downloads.

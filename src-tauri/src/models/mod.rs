@@ -15,6 +15,8 @@ pub struct VideoItem {
     pub max_height: Option<u32>,
     pub max_fps: Option<f64>,
     pub qualities: Vec<u32>,
+    #[serde(default)]
+    pub was_live: Option<bool>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
