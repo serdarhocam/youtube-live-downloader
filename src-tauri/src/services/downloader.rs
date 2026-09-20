@@ -129,6 +129,7 @@ impl DownloadManager {
         let progress_template = "download:PROGRESS_JSON:%(progress)j";
         let mut command = Command::new(&bins.ytdlp);
         command.args([
+            "--js-runtimes", &bins.deno_runtime_arg(), "--remote-components", "ejs:github",
             "--encoding", "utf-8", "--newline", "--no-color", "--continue", "--part", "--no-overwrites",
             "--retries", "10", "--fragment-retries", "20", "--extractor-retries", "5",
             "--file-access-retries", "5", "--retry-sleep", "http:exp=1:20",

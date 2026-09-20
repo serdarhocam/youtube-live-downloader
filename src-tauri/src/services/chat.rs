@@ -124,8 +124,8 @@ pub async fn download(app:&AppHandle,job:&DownloadJob)->Result<ChatReport,String
     let result=async {
         let bins=BinaryPaths::resolve(app)?;
         let stage=directory.join(format!(".chat-download-{}",uuid::Uuid::new_v4()));fs::create_dir(&stage).map_err(|e|e.to_string())?;
-        let mut cmd=tokio::process::Command::new(bins.ytdlp);
-        cmd.args(["--encoding","utf-8","--skip-download","--no-progress","--no-playlist","--write-subs","--sub-langs","live_chat","--no-write-auto-subs","--retries","5","--fragment-retries","10","--output"]).arg(stage.join("chat.%(ext)s")).arg(&job.request.item.webpage_url).stdin(Stdio::null()).kill_on_drop(true);
+        let mut cmd=tokio::process::Command::new(&bins.ytdlp);
+        cmd.args(["--js-runtimes",&bins.deno_runtime_arg(),"--remote-components","ejs:github","--encoding","utf-8","--skip-download","--no-progress","--no-playlist","--write-subs","--sub-langs","live_chat","--no-write-auto-subs","--retries","5","--fragment-retries","10","--output"]).arg(stage.join("chat.%(ext)s")).arg(&job.request.item.webpage_url).stdin(Stdio::null()).kill_on_drop(true);
         #[cfg(windows)] {cmd.creation_flags(0x08000000);}
         let future=cmd.output();tokio::pin!(future);
         let output=loop{tokio::select!{out=&mut future=>break out.map_err(|e|e.to_string())?,_=tokio::time::sleep(std::time::Duration::from_millis(200))=>{if operation.cancel.load(Ordering::Relaxed){return Err("Sohbet indirme iptal edildi. Kısmi ham dosya korunuyor.".into())}}}};

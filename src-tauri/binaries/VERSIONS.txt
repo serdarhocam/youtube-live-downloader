@@ -1,3 +1,4 @@
 yt-dlp: 2026.08.19
+Deno: 2.9.7
 FFmpeg: ffmpeg version 9.0.1-essentials_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers
-Sources: https://github.com/yt-dlp/yt-dlp and https://www.gyan.dev/ffmpeg/builds/
+Sources: https://github.com/yt-dlp/yt-dlp, https://github.com/denoland/deno and https://www.gyan.dev/ffmpeg/builds/

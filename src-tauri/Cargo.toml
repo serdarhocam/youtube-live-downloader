@@ -1,6 +1,6 @@
 [package]
 name = "youtube-live-downloader"
-version = "1.9.0"
+version = "1.9.1"
 description = "Download public YouTube videos and archived livestreams"
 authors = ["YouTube Live Downloader contributors"]
 edition = "2021"

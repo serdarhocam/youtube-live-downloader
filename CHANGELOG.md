@@ -1,3 +1,8 @@
+## 1.9.1
+
+- Restore reliable YouTube Shorts extraction by bundling Deno for yt-dlp's JavaScript challenge solver.
+- Use the embedded runtime for metadata, media, and chat-replay requests without requiring a separate installation.
+
 ## 1.9.0
 
 - Preserve configured chat lifetimes across Resolve cuts; clarify count/height limits.
