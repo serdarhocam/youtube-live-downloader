@@ -5,17 +5,19 @@ use tauri::{AppHandle, Manager};
 // Linked into the Rust executable: the release .exe does not need repository or sidecar files.
 const EMBEDDED_YTDLP: &[u8] = include_bytes!("../../binaries/yt-dlp.exe");
 const EMBEDDED_FFMPEG: &[u8] = include_bytes!("../../binaries/ffmpeg.exe");
-const CACHE_LAYOUT_VERSION: &str = "v1";
+const EMBEDDED_DENO: &[u8] = include_bytes!("../../binaries/deno.exe");
+const CACHE_LAYOUT_VERSION: &str = "v2";
 static RESOLVED: OnceLock<Result<BinaryPaths, String>> = OnceLock::new();
 
 #[derive(Clone, Debug)]
-pub struct BinaryPaths { pub ytdlp: PathBuf, pub ffmpeg: PathBuf }
+pub struct BinaryPaths { pub ytdlp: PathBuf, pub ffmpeg: PathBuf, pub deno: PathBuf }
 
 impl BinaryPaths {
     pub fn resolve(app: &AppHandle) -> Result<Self, String> {
         RESOLVED.get_or_init(|| EmbeddedBinaryManager::new(app).and_then(|m| m.ensure())).clone()
     }
     pub fn ffmpeg_dir(&self) -> &Path { self.ffmpeg.parent().unwrap_or(Path::new(".")) }
+    pub fn deno_runtime_arg(&self) -> String { format!("deno:{}", self.deno.display()) }
 }
 
 struct EmbeddedBinaryManager { version_dir: PathBuf }
@@ -25,7 +27,7 @@ impl EmbeddedBinaryManager {
         let root = app.path().app_local_data_dir()
             .map_err(|e| format!("Cannot locate the application cache directory: {e}"))?
             .join("embedded-binaries").join(CACHE_LAYOUT_VERSION);
-        let combined = hash_parts(&[EMBEDDED_YTDLP, EMBEDDED_FFMPEG]);
+        let combined = hash_parts(&[EMBEDDED_YTDLP, EMBEDDED_FFMPEG, EMBEDDED_DENO]);
         Ok(Self { version_dir: root.join(&combined[..20]) })
     }
 
@@ -33,24 +35,26 @@ impl EmbeddedBinaryManager {
         fs::create_dir_all(&self.version_dir).map_err(|e| format!("Cannot create the embedded binary cache: {e}"))?;
         let ytdlp = self.version_dir.join("yt-dlp.exe");
         let ffmpeg = self.version_dir.join("ffmpeg.exe");
-        if validates(&ytdlp, EMBEDDED_YTDLP) && validates(&ffmpeg, EMBEDDED_FFMPEG) {
-            return Ok(BinaryPaths { ytdlp, ffmpeg });
+        let deno = self.version_dir.join("deno.exe");
+        if validates(&ytdlp, EMBEDDED_YTDLP) && validates(&ffmpeg, EMBEDDED_FFMPEG) && validates(&deno, EMBEDDED_DENO) {
+            return Ok(BinaryPaths { ytdlp, ffmpeg, deno });
         }
         let lock_path = self.version_dir.join("extraction.lock");
-        let _lock = acquire_lock(&lock_path, &ytdlp, &ffmpeg)?;
+        let _lock = acquire_lock(&lock_path, &[(&ytdlp, EMBEDDED_YTDLP), (&ffmpeg, EMBEDDED_FFMPEG), (&deno, EMBEDDED_DENO)])?;
         ensure_file(&ytdlp, EMBEDDED_YTDLP)?;
         ensure_file(&ffmpeg, EMBEDDED_FFMPEG)?;
-        if !validates(&ytdlp, EMBEDDED_YTDLP) || !validates(&ffmpeg, EMBEDDED_FFMPEG) {
+        ensure_file(&deno, EMBEDDED_DENO)?;
+        if !validates(&ytdlp, EMBEDDED_YTDLP) || !validates(&ffmpeg, EMBEDDED_FFMPEG) || !validates(&deno, EMBEDDED_DENO) {
             return Err("Embedded tools failed their post-extraction integrity check.".into());
         }
-        Ok(BinaryPaths { ytdlp, ffmpeg })
+        Ok(BinaryPaths { ytdlp, ffmpeg, deno })
     }
 }
 
 struct ExtractionLock(PathBuf);
 impl Drop for ExtractionLock { fn drop(&mut self) { if !self.0.as_os_str().is_empty() { let _ = fs::remove_file(&self.0); } } }
 
-fn acquire_lock(lock_path: &Path, ytdlp: &Path, ffmpeg: &Path) -> Result<ExtractionLock, String> {
+fn acquire_lock(lock_path: &Path, tools: &[(&Path, &[u8])]) -> Result<ExtractionLock, String> {
     let deadline = SystemTime::now() + Duration::from_secs(90);
     loop {
         match OpenOptions::new().write(true).create_new(true).open(lock_path) {
@@ -60,7 +64,7 @@ fn acquire_lock(lock_path: &Path, ytdlp: &Path, ffmpeg: &Path) -> Result<Extract
                 return Ok(ExtractionLock(lock_path.to_path_buf()));
             }
             Err(e) if e.kind() == std::io::ErrorKind::AlreadyExists => {
-                if validates(ytdlp, EMBEDDED_YTDLP) && validates(ffmpeg, EMBEDDED_FFMPEG) {
+                if tools.iter().all(|(path, embedded)| validates(path, embedded)) {
                     return Ok(ExtractionLock(PathBuf::new()));
                 }
                 if lock_is_stale(lock_path) { let _ = fs::remove_file(lock_path); continue; }
@@ -121,7 +125,9 @@ mod tests {
     fn embedded_payloads_are_windows_executables() {
         assert!(EMBEDDED_YTDLP.starts_with(b"MZ"));
         assert!(EMBEDDED_FFMPEG.starts_with(b"MZ"));
+        assert!(EMBEDDED_DENO.starts_with(b"MZ"));
         assert!(EMBEDDED_YTDLP.len() > 1_000_000);
         assert!(EMBEDDED_FFMPEG.len() > 10_000_000);
+        assert!(EMBEDDED_DENO.len() > 10_000_000);
     }
 }

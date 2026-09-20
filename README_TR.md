@@ -5,7 +5,7 @@
 
 **[Portable Windows uygulamasını indir](https://github.com/serdarhocam/youtube-live-downloader/releases/latest)** · [SHA-256 doğrulama dosyası](https://github.com/serdarhocam/youtube-live-downloader/releases/latest)
 
-Güncel uygulama sürümü: **1.9.0 / p0008**
+Güncel uygulama sürümü: **1.9.1 / p0009**
 
 [English README](README.md)
 
@@ -15,7 +15,7 @@ Yalnızca sahibi olduğunuz veya indirme izniniz bulunan içerikler için kullan
 
 ## Özellikler
 
-- yt-dlp JSON aracılığıyla video, oynatma listesi ve `/streams` adresi meta verileri
+- yt-dlp JSON aracılığıyla video, Shorts, oynatma listesi ve `/streams` adresi meta verileri
 - Küçük resim, başlık, tarih, süre, kanal, açıklama, çözünürlük ve FPS gösterimi
 - Tekli/çoklu seçim ve varsayılan iki eşzamanlı indirme kuyruğu
 - En iyi kalite veya üst çözünürlük sınırı seçimi
@@ -240,11 +240,11 @@ Her indirme kartındaki **Oynat** düğmesi bağımsız bir masaüstü penceresi
 
 Canlı yayın sohbetlerini indirme, 15 saniyelik yoğunluk analizi, Resolve XML kesimlerini içe aktarma ve şeffaf sohbet katmanı üretme için [kullanım rehberine](CHAT_WORKFLOW_TR.md) bakın.
 
-## 1.9.0 / p0008
+## 1.9.1 / p0009
 
-- [Portable EXE](https://github.com/serdarhocam/youtube-live-downloader/releases/download/v1.9.0/YouTubeLiveDownloader-v1.9.0-p0008-portable.exe)
-- [Installer EXE](https://github.com/serdarhocam/youtube-live-downloader/releases/download/v1.9.0/YouTubeLiveDownloader-v1.9.0-p0008-installer.exe)
-- [SHA-256](https://github.com/serdarhocam/youtube-live-downloader/releases/download/v1.9.0/SHA256SUMS.txt)
+- [Portable EXE](https://github.com/serdarhocam/youtube-live-downloader/releases/download/v1.9.1/YouTubeLiveDownloader-v1.9.1-p0009-portable.exe)
+- [Installer EXE](https://github.com/serdarhocam/youtube-live-downloader/releases/download/v1.9.1/YouTubeLiveDownloader-v1.9.1-p0009-installer.exe)
+- [SHA-256](https://github.com/serdarhocam/youtube-live-downloader/releases/download/v1.9.1/SHA256SUMS.txt)
 - [Chat ve Resolve rehberi](CHAT_WORKFLOW_TR.md)
 
-Mesaj süreleri kesim sınırlarında kısalmaz. Geçmiş mesajlar için font ve opaklık ayarları bulunur. MOV ve SRT, Resolve kesimleri etkinse yeni zaman çizelgesini kullanır.
+YouTube Shorts indirmeleri artık yt-dlp'nin JavaScript challenge işlemleri için uygulamaya gömülü Deno çalışma zamanını kullanır; ayrıca kurulum gerekmez. Sohbet ve Resolve özellikleri değişmeden korunur.

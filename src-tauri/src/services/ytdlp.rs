@@ -60,7 +60,7 @@ pub async fn metadata(app: &AppHandle, input: &str) -> Result<Vec<VideoItem>, St
     let bins = BinaryPaths::resolve(app)?;
     tracing::info!("yt-dlp metadata invocation");
     let mut command = Command::new(&bins.ytdlp);
-    command.args(["--dump-single-json", "--no-flat-playlist", "--no-warnings", "--ignore-errors", "--no-call-home", &url])
+    command.args(["--js-runtimes", &bins.deno_runtime_arg(), "--remote-components", "ejs:github", "--dump-single-json", "--no-flat-playlist", "--no-warnings", "--ignore-errors", &url])
         .stdout(Stdio::piped()).stderr(Stdio::piped()).stdin(Stdio::null());
     hide_console(&mut command);
     let output = command.output().await.map_err(|e| format!("Could not start bundled yt-dlp: {e}"))?;

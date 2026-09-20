@@ -5,7 +5,7 @@
 
 **[Download the portable Windows application](https://github.com/serdarhocam/youtube-live-downloader/releases/latest)** · [SHA-256 checksum](https://github.com/serdarhocam/youtube-live-downloader/releases/latest)
 
-Current application version: **1.9.0 / p0008**
+Current application version: **1.9.1 / p0009**
 
 [Türkçe README](README_TR.md)
 
@@ -15,7 +15,7 @@ Use it only for content you own or have permission to download. It does not bypa
 
 ## Features
 
-- Video, playlist, and `/streams` URL metadata through yt-dlp JSON
+- Video, Shorts, playlist, and `/streams` URL metadata through yt-dlp JSON
 - Thumbnail, title, date, duration, channel, description, resolution, and FPS display
 - Individual/multiple selection and a two-download queue
 - Best quality or resolution-capped download choices
@@ -236,14 +236,14 @@ Each download card has **Play**, opening an independent desktop window with play
 
 Chat Studio archives available replays, analyzes 15-second sliding windows, imports straight-cut Final Cut Pro 7 XML and exports retimed SRT or transparent QuickTime Animation MOV overlays. Recent messages from removed sections can remain visible as temporary history. See the [Turkish workflow guide](CHAT_WORKFLOW_TR.md) for settings and limitations.
 
-## 1.9.0 / p0008
+## 1.9.1 / p0009
 
-- [Portable EXE](https://github.com/serdarhocam/youtube-live-downloader/releases/download/v1.9.0/YouTubeLiveDownloader-v1.9.0-p0008-portable.exe)
-- [Installer EXE](https://github.com/serdarhocam/youtube-live-downloader/releases/download/v1.9.0/YouTubeLiveDownloader-v1.9.0-p0008-installer.exe)
-- [SHA-256](https://github.com/serdarhocam/youtube-live-downloader/releases/download/v1.9.0/SHA256SUMS.txt)
+- [Portable EXE](https://github.com/serdarhocam/youtube-live-downloader/releases/download/v1.9.1/YouTubeLiveDownloader-v1.9.1-p0009-portable.exe)
+- [Installer EXE](https://github.com/serdarhocam/youtube-live-downloader/releases/download/v1.9.1/YouTubeLiveDownloader-v1.9.1-p0009-installer.exe)
+- [SHA-256](https://github.com/serdarhocam/youtube-live-downloader/releases/download/v1.9.1/SHA256SUMS.txt)
 - [Chat ve Resolve rehberi](CHAT_WORKFLOW_TR.md)
 
-Mesaj süreleri kesim sınırlarında kısalmaz. Geçmiş mesajlar için font ve opaklık ayarları bulunur. MOV ve SRT, Resolve kesimleri etkinse yeni zaman çizelgesini kullanır.
+YouTube Shorts downloads now use the bundled Deno runtime for yt-dlp's JavaScript challenge handling; no separate runtime installation is required. Chat and Resolve features remain unchanged.
 
 ## Publishing updates to GitHub
 
