@@ -5,7 +5,7 @@
 
 **[Portable Windows uygulamasını indir](https://github.com/serdarhocam/youtube-live-downloader/releases/latest)** · [SHA-256 doğrulama dosyası](https://github.com/serdarhocam/youtube-live-downloader/releases/latest)
 
-Güncel uygulama sürümü: **1.9.1 / p0009**
+Güncel uygulama sürümü: **1.9.2 / p0011**
 
 [English README](README.md)
 
@@ -77,10 +77,11 @@ Kapsamı dar `.gitattributes` kuralları yalnızca gömülü EXE dosyalarını L
 Depo kopyaları `src-tauri/binaries/` altında bulunur:
 
 - `yt-dlp.exe`: Resmi [yt-dlp sürümleri](https://github.com/yt-dlp/yt-dlp/releases)
+- `deno.exe`: [Deno sürümlerinden](https://github.com/denoland/deno/releases) JavaScript çalışma zamanı
 - `ffmpeg.exe` ve `ffprobe.exe`: FFmpeg kaynağından derlenen [gyan.dev Windows essentials build](https://www.gyan.dev/ffmpeg/builds/)
 - `VERSIONS.txt`: Sabitlenmiş sürümler ve kaynak adresleri
 
-Rust binary yöneticisi yt-dlp ve FFmpeg'i `include_bytes!` ile doğrudan uygulamaya bağlar. Başlangıçta gömülü yükün hash'ini hesaplar ve araçları `%LOCALAPPDATA%\com.ytld.desktop\embedded-binaries\v1\<hash>` altına çıkarır. Var olan dosyalar yalnız boyut ve SHA-256 doğrulamasından sonra yeniden kullanılır. Çıkarma işlemi süreçler arası kilit, geçici dosya, flush, doğrulama ve atomik yeniden adlandırma kullanır. yt-dlp'ye her zaman `--ffmpeg-location` ile çıkarılmış FFmpeg klasörü verilir; hiçbir araç `PATH` içinde aranmaz.
+Rust binary yöneticisi yt-dlp ve FFmpeg'i `include_bytes!` ile doğrudan uygulamaya bağlar. Başlangıçta gömülü yükün hash'ini hesaplar ve araçları `%LOCALAPPDATA%\com.ytld.desktop\embedded-binaries\v2\<hash>` altına çıkarır. Var olan dosyalar yalnız boyut ve SHA-256 doğrulamasından sonra yeniden kullanılır. Çıkarma işlemi süreçler arası kilit, geçici dosya, flush, doğrulama ve atomik yeniden adlandırma kullanır. yt-dlp'ye her zaman `--ffmpeg-location` ile çıkarılmış FFmpeg klasörü verilir; hiçbir araç `PATH` içinde aranmaz.
 
 Mevcut NSIS yükleyicinin isteğe bağlı dağıtım olarak çalışmaya devam etmesi için aynı kaynak binary'ler `tauri.conf.json` içinde Tauri resource olarak da listelenir. Portable EXE bu dış resource kopyalarına bağımlı değildir.
 
@@ -174,7 +175,7 @@ Varsayılan hedef `Videos\YouTube Live Downloader` klasörüdür; mümkün deği
 `com.ytld.desktop` için tipik Windows konumları:
 
 - Ayarlar ve kalıcı kuyruk: `%APPDATA%\com.ytld.desktop`
-- Çıkarılmış gömülü araçlar: `%LOCALAPPDATA%\com.ytld.desktop\embedded-binaries\v1\<payload-hash>`
+- Çıkarılmış gömülü araçlar: `%LOCALAPPDATA%\com.ytld.desktop\embedded-binaries\v2\<payload-hash>`
 - Loglar: Mevcut kullanıcının Tauri uygulama log klasörü
 
 Bu konumlar uygulamaya ait çalışma depolamasıdır. Otomatik oluşturulur ve geliştirme deposundan bağımlılık değildir.
@@ -240,11 +241,11 @@ Her indirme kartındaki **Oynat** düğmesi bağımsız bir masaüstü penceresi
 
 Canlı yayın sohbetlerini indirme, 15 saniyelik yoğunluk analizi, Resolve XML kesimlerini içe aktarma ve şeffaf sohbet katmanı üretme için [kullanım rehberine](CHAT_WORKFLOW_TR.md) bakın.
 
-## 1.9.1 / p0009
+## 1.9.2 / p0011
 
-- [Portable EXE](https://github.com/serdarhocam/youtube-live-downloader/releases/download/v1.9.1/YouTubeLiveDownloader-v1.9.1-p0009-portable.exe)
-- [Installer EXE](https://github.com/serdarhocam/youtube-live-downloader/releases/download/v1.9.1/YouTubeLiveDownloader-v1.9.1-p0009-installer.exe)
-- [SHA-256](https://github.com/serdarhocam/youtube-live-downloader/releases/download/v1.9.1/SHA256SUMS.txt)
+- [Portable EXE](https://github.com/serdarhocam/youtube-live-downloader/releases/download/v1.9.2/YouTubeLiveDownloader-v1.9.2-p0011-portable.exe)
+- [Installer EXE](https://github.com/serdarhocam/youtube-live-downloader/releases/download/v1.9.2/YouTubeLiveDownloader-v1.9.2-p0011-installer.exe)
+- [SHA-256](https://github.com/serdarhocam/youtube-live-downloader/releases/download/v1.9.2/SHA256SUMS.txt)
 - [Chat ve Resolve rehberi](CHAT_WORKFLOW_TR.md)
 
-YouTube Shorts indirmeleri artık yt-dlp'nin JavaScript challenge işlemleri için uygulamaya gömülü Deno çalışma zamanını kullanır; ayrıca kurulum gerekmez. Sohbet ve Resolve özellikleri değişmeden korunur.
+Gömülü araçlar yt-dlp 2026.10.26, Deno 2.9.8 ve FFmpeg 9.0.2 sürümlerine güncellendi. Boş video bilgisi artık isimsiz kayıt oluşturmaz, oturum açma yanıtları otomatik tekrarları durdurur ve yükleme hataları ekranda kalır.

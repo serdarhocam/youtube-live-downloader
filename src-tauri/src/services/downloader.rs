@@ -340,9 +340,28 @@ fn parse_percent(value:&str)->Option<f64>{value.trim().trim_end_matches('%').tri
 fn emit_job(app:&AppHandle,job:&DownloadJob){if let Err(error)=app.emit("download-progress",job.progress()){tracing::warn!(job_id=%job.job_id,%error,"could not emit download progress");}}
 fn validate_destination(directory:&str)->Result<(),String>{let dir=PathBuf::from(directory);fs::create_dir_all(&dir).map_err(|e|format!("Cannot use download directory: {e}"))?;if !dir.is_dir(){return Err("The download destination is not a folder.".into())}Ok(())}
 
-fn is_permanent_error(stderr:&str)->bool{let s=stderr.to_lowercase();["private video","video unavailable","has been removed","sign in to confirm","login required","unsupported url","requested format is not available","no video formats found","this video is not available"].iter().any(|v|s.contains(v))}
+fn is_permanent_error(stderr:&str)->bool{let s=stderr.to_lowercase();["private video","video unavailable","has been removed","sign in","login required","unsupported url","requested format is not available","no video formats found","this video is not available"].iter().any(|v|s.contains(v))}
 fn permanent_message(stderr:&str)->String{let s=stderr.to_lowercase();if s.contains("private")||s.contains("sign in")||s.contains("login required"){"This video requires authentication and cannot be downloaded in anonymous mode.".into()}else if s.contains("format"){"The requested format is not available for this video.".into()}else{"This video is unavailable and cannot be retried automatically.".into()}}
 fn is_disk_full(stderr:&str)->bool{let s=stderr.to_lowercase();s.contains("no space left")||s.contains("disk full")||s.contains("not enough space")||s.contains("os error 112")}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn sign_in_responses_stop_automatic_retries() {
+        for message in ["ERROR: Please sign in.", "ERROR: Please sign in. This helps protect our community.", "ERROR: Sign in to confirm you're not a bot"] {
+            assert!(is_permanent_error(message));
+            assert!(permanent_message(message).contains("requires authentication"));
+        }
+    }
+
+    #[test]
+    fn transient_download_errors_remain_retryable() {
+        assert!(!is_permanent_error("ERROR: HTTP Error 503: Service Unavailable"));
+        assert!(!is_permanent_error("ERROR: Connection timed out"));
+    }
+}
 
 fn queue_path(app:&AppHandle)->Result<PathBuf,String>{let dir=app.path().app_config_dir().map_err(|e|e.to_string())?;fs::create_dir_all(&dir).map_err(|e|e.to_string())?;Ok(dir.join("download-queue.json"))}
 fn load_jobs(app:&AppHandle)->Result<HashMap<String,DownloadJob>,String>{let path=queue_path(app)?;let backup=path.with_extension("json.bak");let bytes=fs::read(&path).or_else(|_|fs::read(&backup));match bytes{Ok(data)=>{let jobs:Vec<DownloadJob>=serde_json::from_slice(&data).map_err(|e|format!("Cannot read persisted download queue: {e}"))?;Ok(jobs.into_iter().map(|j|(j.job_id.clone(),j)).collect())},Err(e)if e.kind()==std::io::ErrorKind::NotFound=>Ok(HashMap::new()),Err(e)=>Err(e.to_string())}}

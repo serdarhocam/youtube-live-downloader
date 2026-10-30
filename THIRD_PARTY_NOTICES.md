@@ -5,24 +5,24 @@ YouTube Live Downloader bundles and invokes the following independent command-li
 ## yt-dlp
 
 - Project: https://github.com/yt-dlp/yt-dlp
-- Bundled version: 2026.08.19
+- Bundled version: 2026.10.26
 - License: The Unlicense (see the upstream repository)
-- Source for the bundled version: https://github.com/yt-dlp/yt-dlp/tree/2026.08.19
+- Source for the bundled version: https://github.com/yt-dlp/yt-dlp/tree/2026.10.26
 
 ## FFmpeg and FFprobe
 
 - Project: https://ffmpeg.org/
 - Windows build provider: https://www.gyan.dev/ffmpeg/builds/
-- Bundled build: FFmpeg 9.0.1 essentials build by Gyan Doshi
+- Bundled build: FFmpeg 9.0.2 essentials build by Gyan Doshi
 - FFmpeg licensing information: https://ffmpeg.org/legal.html
-- Corresponding FFmpeg source: https://ffmpeg.org/releases/ffmpeg-9.0.1.tar.xz
+- Corresponding FFmpeg source: https://ffmpeg.org/releases/ffmpeg-9.0.2.tar.xz
 
 ## Deno
 
 - Project: https://github.com/denoland/deno
-- Bundled version: 2.9.7
+- Bundled version: 2.9.8
 - License: MIT (see the upstream repository)
-- Source for the bundled version: https://github.com/denoland/deno/tree/v2.9.7
+- Source for the bundled version: https://github.com/denoland/deno/tree/v2.9.8
 
 FFmpeg is a trademark of Fabrice Bellard, originator of the FFmpeg project. YouTube is a trademark of Google LLC. This project is not affiliated with or endorsed by Google, YouTube, yt-dlp, FFmpeg, or the Windows build provider.
 

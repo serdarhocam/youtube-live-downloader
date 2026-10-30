@@ -65,9 +65,26 @@ pub async fn metadata(app: &AppHandle, input: &str) -> Result<Vec<VideoItem>, St
     hide_console(&mut command);
     let output = command.output().await.map_err(|e| format!("Could not start bundled yt-dlp: {e}"))?;
     let stderr = String::from_utf8_lossy(&output.stderr).to_string();
-    if !output.status.success() && output.stdout.is_empty() { return Err(format!("{}\n\nTechnical details:\n{}", friendly_error(&stderr), stderr.trim())); }
-    let root: Value = serde_json::from_slice(&output.stdout).map_err(|e| format!("yt-dlp returned invalid metadata: {e}\n{stderr}"))?;
-    let items = root.get("entries").and_then(Value::as_array).map(|entries| entries.iter().filter(|v| !v.is_null()).map(|v| parse_item(v, &url)).collect()).unwrap_or_else(|| vec![parse_item(&root, &url)]);
+    parse_metadata_output(&output.stdout, &stderr, &url)
+}
+
+fn parse_metadata_output(stdout: &[u8], stderr: &str, url: &str) -> Result<Vec<VideoItem>, String> {
+    let error = || format!("{}\n\nTechnical details:\n{}", friendly_error(stderr), stderr.trim());
+    if stdout.is_empty() { return Err(error()); }
+    let root: Value = serde_json::from_slice(stdout)
+        .map_err(|e| format!("yt-dlp returned invalid metadata: {e}\n\nTechnical details:\n{stderr}"))?;
+    let valid_item = |v: &&Value| v.is_object() && v.get("id").and_then(Value::as_str).is_some_and(|id| !id.trim().is_empty());
+    let items: Vec<_> = if let Some(entries) = root.get("entries").and_then(Value::as_array) {
+        // Keep available playlist entries when yt-dlp skips private or removed videos.
+        entries.iter().filter(valid_item).map(|v| parse_item(v, url)).collect()
+    } else {
+        std::iter::once(&root).filter(valid_item).map(|v| parse_item(v, url)).collect()
+    };
+    if items.is_empty() {
+        return Err(if stderr.trim().is_empty() {
+            "No downloadable video metadata was returned for this URL.".into()
+        } else { error() });
+    }
     Ok(items)
 }
 
@@ -91,6 +108,35 @@ fn hide_console(command: &mut Command) {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn failed_metadata_does_not_create_an_untitled_video() {
+        let error = parse_metadata_output(b"null\n", "ERROR: Please sign in.", "https://www.youtube.com/shorts/qoOftnh6j5w").unwrap_err();
+        assert!(error.contains("requires authentication"));
+        assert!(error.contains("Please sign in"));
+    }
+
+    #[test]
+    fn incomplete_metadata_and_empty_playlists_are_rejected() {
+        for output in [r#"{}"#, r#"{"id":""}"#, r#"{"entries":[null,{}]}"#, r#"{"entries":[]}"#] {
+            assert!(parse_metadata_output(output.as_bytes(), "", "https://example.com").is_err());
+        }
+    }
+
+    #[test]
+    fn playlist_preserves_available_entries_after_extraction_errors() {
+        let output = br#"{"entries":[null,{"id":"abcdefghijk","title":"Available"},{}]}"#;
+        let items = parse_metadata_output(output, "ERROR: Private video", "https://www.youtube.com/playlist?list=test").unwrap();
+        assert_eq!(items.len(), 1);
+        assert_eq!(items[0].id, "abcdefghijk");
+    }
+
+    #[test]
+    fn valid_single_video_metadata_is_preserved() {
+        let items = parse_metadata_output(br#"{"id":"abcdefghijk","title":"Short","height":1920}"#, "", "https://www.youtube.com/shorts/abcdefghijk").unwrap();
+        assert_eq!(items.len(), 1);
+        assert_eq!(items[0].max_height, Some(1920));
+    }
 
     #[test]
     fn playlist_item_uses_thumbnail_array_and_upload_date() {
