@@ -1,3 +1,11 @@
+## 1.9.2
+
+- Update bundled yt-dlp to 2026.10.26, Deno to 2.9.8, and FFmpeg/FFprobe to 9.0.2.
+- Refresh compatible JavaScript and Rust dependencies, including Tauri and Vite fixes.
+- Reject empty or null metadata instead of creating an untitled download entry; keep available entries in partially accessible playlists.
+- Stop automatic retries when YouTube asks users to sign in, and preserve loading errors across interface updates.
+- Refresh numbered portable and installer downloads on GitHub Releases and the project page.
+
 ## 1.9.1
 
 - Restore reliable YouTube Shorts extraction by bundling Deno for yt-dlp's JavaScript challenge solver.

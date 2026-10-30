@@ -5,7 +5,7 @@
 
 **[Download the portable Windows application](https://github.com/serdarhocam/youtube-live-downloader/releases/latest)** · [SHA-256 checksum](https://github.com/serdarhocam/youtube-live-downloader/releases/latest)
 
-Current application version: **1.9.1 / p0009**
+Current application version: **1.9.2 / p0011**
 
 [Türkçe README](README_TR.md)
 
@@ -73,10 +73,11 @@ The scoped `.gitattributes` rules store only the bundled executables in LFS. Ver
 Repository copies live in `src-tauri/binaries/`:
 
 - `yt-dlp.exe` - official executable from the [yt-dlp releases](https://github.com/yt-dlp/yt-dlp/releases)
+- `deno.exe` - JavaScript runtime from the [Deno releases](https://github.com/denoland/deno/releases)
 - `ffmpeg.exe` and `ffprobe.exe` - Windows essentials build from [gyan.dev](https://www.gyan.dev/ffmpeg/builds/), built from FFmpeg source
 - `VERSIONS.txt` - pinned versions and source URLs
 
-The Rust binary manager links yt-dlp and FFmpeg directly into the application with `include_bytes!`. At startup it computes the embedded payload hash and extracts them under `%LOCALAPPDATA%\com.ytld.desktop\embedded-binaries\v1\<hash>`. Existing files are reused only after size and SHA-256 validation. Extraction uses a cross-process lock, temporary file, flush, verification, and atomic rename. yt-dlp always receives the extracted FFmpeg directory via `--ffmpeg-location`; neither executable is searched in `PATH`.
+The Rust binary manager links yt-dlp and FFmpeg directly into the application with `include_bytes!`. At startup it computes the embedded payload hash and extracts them under `%LOCALAPPDATA%\com.ytld.desktop\embedded-binaries\v2\<hash>`. Existing files are reused only after size and SHA-256 validation. Extraction uses a cross-process lock, temporary file, flush, verification, and atomic rename. yt-dlp always receives the extracted FFmpeg directory via `--ffmpeg-location`; neither executable is searched in `PATH`.
 
 The same source binaries remain listed as Tauri resources in `tauri.conf.json` so the existing NSIS installer continues to work as an optional distribution. The portable executable does not depend on those external resource copies.
 
@@ -176,7 +177,7 @@ The default window is 1280×860 with a compact responsive layout. On shorter dis
 Typical Windows locations for identifier `com.ytld.desktop` are:
 
 - Settings and persistent queue: `%APPDATA%\com.ytld.desktop`
-- Extracted embedded tools: `%LOCALAPPDATA%\com.ytld.desktop\embedded-binaries\v1\<payload-hash>`
+- Extracted embedded tools: `%LOCALAPPDATA%\com.ytld.desktop\embedded-binaries\v2\<payload-hash>`
 - Logs: the Tauri application log directory for the current user
 
 These locations are application-owned runtime storage. They are created automatically and are not dependencies from the development repository.
@@ -236,14 +237,14 @@ Each download card has **Play**, opening an independent desktop window with play
 
 Chat Studio archives available replays, analyzes 15-second sliding windows, imports straight-cut Final Cut Pro 7 XML and exports retimed SRT or transparent QuickTime Animation MOV overlays. Recent messages from removed sections can remain visible as temporary history. See the [Turkish workflow guide](CHAT_WORKFLOW_TR.md) for settings and limitations.
 
-## 1.9.1 / p0009
+## 1.9.2 / p0011
 
-- [Portable EXE](https://github.com/serdarhocam/youtube-live-downloader/releases/download/v1.9.1/YouTubeLiveDownloader-v1.9.1-p0009-portable.exe)
-- [Installer EXE](https://github.com/serdarhocam/youtube-live-downloader/releases/download/v1.9.1/YouTubeLiveDownloader-v1.9.1-p0009-installer.exe)
-- [SHA-256](https://github.com/serdarhocam/youtube-live-downloader/releases/download/v1.9.1/SHA256SUMS.txt)
+- [Portable EXE](https://github.com/serdarhocam/youtube-live-downloader/releases/download/v1.9.2/YouTubeLiveDownloader-v1.9.2-p0011-portable.exe)
+- [Installer EXE](https://github.com/serdarhocam/youtube-live-downloader/releases/download/v1.9.2/YouTubeLiveDownloader-v1.9.2-p0011-installer.exe)
+- [SHA-256](https://github.com/serdarhocam/youtube-live-downloader/releases/download/v1.9.2/SHA256SUMS.txt)
 - [Chat ve Resolve rehberi](CHAT_WORKFLOW_TR.md)
 
-YouTube Shorts downloads now use the bundled Deno runtime for yt-dlp's JavaScript challenge handling; no separate runtime installation is required. Chat and Resolve features remain unchanged.
+Bundled tools are updated to yt-dlp 2026.10.26, Deno 2.9.8, and FFmpeg 9.0.2. Empty metadata no longer creates an untitled video, sign-in responses stop automatic retries, and loading errors remain visible.
 
 ## Publishing updates to GitHub
 
